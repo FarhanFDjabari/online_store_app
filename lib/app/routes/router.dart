@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:online_order_app/app/pages/order/order_screen.dart';
+import 'package:online_order_app/app/pages/order_detail/order_detail_screen.dart';
 import 'package:online_order_app/app/pages/product_detail/product_detail_screen.dart';
 import 'package:online_order_app/app/pages/product_list/product_list_screen.dart';
 import 'package:online_order_app/app/pages/splash/splash_screen.dart';
@@ -26,7 +27,7 @@ final router = GoRouter(
           path: RoutePath.productDetail,
           name: RouteName.productDetail,
           builder: (context, state) => ProductDetailScreen(
-            productId: "${state.params['productId']}",
+            productId: "${state.path}",
           ),
         ),
       ],
@@ -37,11 +38,20 @@ final router = GoRouter(
       builder: (context, state) => const OrderScreen(),
       routes: [
         GoRoute(
-          path: RoutePath.transactionResult,
-          name: RouteName.transactionResult,
-          builder: (context, state) => TransactionResultScreen(
-            orderId: "${state.params['orderId']}",
+          path: RoutePath.orderDetail,
+          name: RouteName.orderDetail,
+          builder: (context, state) => OrderDetailScreen(
+            orderId: "${state.path}",
           ),
+          routes: [
+            GoRoute(
+              path: RoutePath.transactionResult,
+              name: RouteName.transactionResult,
+              builder: (context, state) => TransactionResultScreen(
+                orderId: "${state.params['orderId']}",
+              ),
+            ),
+          ],
         ),
       ],
     ),

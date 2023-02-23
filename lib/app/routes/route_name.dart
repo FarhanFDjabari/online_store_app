@@ -3,5 +3,6 @@ class RouteName {
   static const productList = "product_list_screen";
   static const productDetail = "product_detail_screen";
   static const order = "order_screen";
+  static const orderDetail = "order_detail_screen";
   static const transactionResult = "transaction_screen";
 }
