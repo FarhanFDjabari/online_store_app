@@ -6,3 +6,13 @@ abstract class TransactionResultEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+
+class LoadTransactionResultEvent extends TransactionResultEvent {
+  final int orderId;
+  const LoadTransactionResultEvent(this.orderId);
+}
+
+class DeleteCartEvent extends TransactionResultEvent {
+  final CartModel cart;
+  const DeleteCartEvent(this.cart);
+}

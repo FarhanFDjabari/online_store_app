@@ -29,4 +29,8 @@ TextTheme textTheme = TextTheme(
     fontSize: 28.sp,
     letterSpacing: 0.63.sp,
   ),
+).apply(
+  displayColor: Colors.black,
+  decorationColor: Colors.black,
+  bodyColor: Colors.black,
 );

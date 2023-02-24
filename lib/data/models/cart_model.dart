@@ -1,48 +1,72 @@
 import 'package:equatable/equatable.dart';
-import 'package:online_order_app/domain/entities/cart_entity.dart';
+import 'package:online_order_app/data/models/cart_table.dart';
 
-import 'product.dart';
+import 'cart_product.dart';
 
 class CartModel extends Equatable {
-  final int? id;
+  final int id;
+  final List<CartProduct>? products;
+  final int? total;
+  final int? discountedTotal;
   final int? userId;
-  final DateTime? date;
-  final List<Product>? products;
-  final int? v;
+  final int? totalProducts;
+  final int? totalQuantity;
 
-  const CartModel({this.id, this.userId, this.date, this.products, this.v});
+  const CartModel({
+    required this.id,
+    this.products,
+    this.total,
+    this.discountedTotal,
+    this.userId,
+    this.totalProducts,
+    this.totalQuantity,
+  });
 
   factory CartModel.fromJson(Map<String, dynamic> json) => CartModel(
-        id: json['id'] as int?,
-        userId: json['userId'] as int?,
-        date: json['date'] == null
-            ? null
-            : DateTime.parse(json['date'] as String),
+        id: json['id'] as int,
         products: (json['products'] as List<dynamic>?)
-            ?.map((e) => Product.fromJson(e as Map<String, dynamic>))
+            ?.map((e) => CartProduct.fromJson(e as Map<String, dynamic>))
             .toList(),
-        v: json['__v'] as int?,
+        total: json['total'] as int?,
+        discountedTotal: json['discountedTotal'] as int?,
+        userId: json['userId'] as int?,
+        totalProducts: json['totalProducts'] as int?,
+        totalQuantity: json['totalQuantity'] as int?,
       );
 
   Map<String, dynamic> toJson() => {
         'id': id,
-        'userId': userId,
-        'date': date?.toIso8601String(),
         'products': products?.map((e) => e.toJson()).toList(),
-        '__v': v,
+        'total': total,
+        'discountedTotal': discountedTotal,
+        'userId': userId,
+        'totalProducts': totalProducts,
+        'totalQuantity': totalQuantity,
       };
 
-  CartEntity toEntity() => CartEntity(
+  CartTable toTable() => CartTable(
         id: id,
-        date: date,
-        products: products,
+        discountedTotal: discountedTotal,
+        products: products?.map((e) => e.toJson()).toList().join(';'),
+        total: total,
+        totalProducts: totalProducts,
+        totalQuantity: totalQuantity,
         userId: userId,
-        v: v,
       );
 
   @override
   bool get stringify => true;
 
   @override
-  List<Object?> get props => [id, userId, date, products, v];
+  List<Object?> get props {
+    return [
+      id,
+      products,
+      total,
+      discountedTotal,
+      userId,
+      totalProducts,
+      totalQuantity,
+    ];
+  }
 }

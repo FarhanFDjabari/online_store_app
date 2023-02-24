@@ -19,13 +19,13 @@ class _ApiServices implements ApiServices {
   String? baseUrl;
 
   @override
-  Future<List<ProductListItemModel>> fetchAllProducts() async {
+  Future<ProductListItemResponse> fetchAllProducts() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    final _result = await _dio.fetch<List<dynamic>>(
-        _setStreamType<List<ProductListItemModel>>(Options(
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<ProductListItemResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -37,21 +37,18 @@ class _ApiServices implements ApiServices {
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    var value = _result.data!
-        .map((dynamic i) =>
-            ProductListItemModel.fromJson(i as Map<String, dynamic>))
-        .toList();
+    final value = ProductListItemResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<ProductListItemModel> fetchProductById({required productId}) async {
+  Future<ProductModel> fetchProductById({required productId}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<ProductListItemModel>(Options(
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<ProductModel>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -63,18 +60,18 @@ class _ApiServices implements ApiServices {
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = ProductListItemModel.fromJson(_result.data!);
+    final value = ProductModel.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<List<CartModel>> fetchAllCarts() async {
+  Future<CartListResponse> fetchAllCarts() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    final _result =
-        await _dio.fetch<List<dynamic>>(_setStreamType<List<CartModel>>(Options(
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<CartListResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -86,9 +83,7 @@ class _ApiServices implements ApiServices {
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    var value = _result.data!
-        .map((dynamic i) => CartModel.fromJson(i as Map<String, dynamic>))
-        .toList();
+    final value = CartListResponse.fromJson(_result.data!);
     return value;
   }
 
@@ -144,13 +139,13 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<CartModel> fetchCartById({required cartId}) async {
+  Future<CartModel?> fetchCartById({required cartId}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<CartModel>(Options(
+        .fetch<Map<String, dynamic>?>(_setStreamType<CartModel>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -162,7 +157,8 @@ class _ApiServices implements ApiServices {
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = CartModel.fromJson(_result.data!);
+    final value =
+        _result.data == null ? null : CartModel.fromJson(_result.data!);
     return value;
   }
 

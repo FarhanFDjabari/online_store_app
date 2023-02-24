@@ -6,3 +6,10 @@ abstract class OrderEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+
+class LoadAllOrderEvent extends OrderEvent {}
+
+class DeleteCartEvent extends OrderEvent {
+  final CartModel cart;
+  const DeleteCartEvent(this.cart);
+}

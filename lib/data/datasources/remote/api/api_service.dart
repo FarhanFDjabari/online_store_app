@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:online_order_app/data/models/cart_list_response.dart';
 import 'package:online_order_app/data/models/cart_model.dart';
-import 'package:online_order_app/data/models/product_list_item_model.dart';
+import 'package:online_order_app/data/models/product_list_item_response.dart';
+import 'package:online_order_app/data/models/product_model.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'api_service.g.dart';
@@ -12,15 +14,15 @@ abstract class ApiServices {
   factory ApiServices(Dio dio, {String baseUrl}) = _ApiServices;
 
   @GET('products')
-  Future<List<ProductListItemModel>> fetchAllProducts();
+  Future<ProductListItemResponse> fetchAllProducts();
 
   @GET('products/{id}')
-  Future<ProductListItemModel> fetchProductById({
+  Future<ProductModel> fetchProductById({
     @Path('id') required String productId,
   });
 
   @GET('carts')
-  Future<List<CartModel>> fetchAllCarts();
+  Future<CartListResponse> fetchAllCarts();
 
   @POST('carts')
   Future<CartModel> postNewCart({
@@ -34,7 +36,7 @@ abstract class ApiServices {
   });
 
   @GET('carts/{id}')
-  Future<CartModel> fetchCartById({
+  Future<CartModel?> fetchCartById({
     @Path('id') required String cartId,
   });
 }

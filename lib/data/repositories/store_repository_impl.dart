@@ -1,10 +1,14 @@
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
 import 'package:online_order_app/data/datasources/local/store_local_datasource.dart';
 import 'package:online_order_app/data/datasources/remote/store_remote_datasource.dart';
-import 'package:online_order_app/domain/entities/product_list_item_entity.dart';
-import 'package:online_order_app/domain/entities/cart_entity.dart';
+import 'package:online_order_app/data/models/cart_list_response.dart';
+import 'package:online_order_app/data/models/cart_model.dart';
+import 'package:online_order_app/data/models/product_list_item_response.dart';
+import 'package:online_order_app/data/models/product_model.dart';
 import 'package:online_order_app/domain/repositories/store_repository.dart';
 
+@LazySingleton(as: StoreRepository)
 class StoreRepositoryImpl extends StoreRepository {
   final StoreRemoteDatasource _remoteDatasource;
   final StoreLocalDatasource _localDatasource;
@@ -12,68 +16,67 @@ class StoreRepositoryImpl extends StoreRepository {
   StoreRepositoryImpl(this._remoteDatasource, this._localDatasource);
 
   @override
-  Future<Either<String, CartEntity>> addCart(CartEntity cart) async {
+  Future<Either<String, CartModel>> addCart(CartModel cart) async {
     try {
-      final result = await _remoteDatasource.addCart(cart.toModel());
-      return Right(result.toEntity());
+      final result = await _remoteDatasource.addCart(cart);
+      return Right(result);
     } catch (e) {
       return Left(e.toString());
     }
   }
 
   @override
-  Future<Either<String, List<CartEntity>>> getAllCarts() async {
+  Future<Either<String, CartListResponse>> getAllCarts() async {
     try {
       final result = await _remoteDatasource.getAllCarts();
-      return Right(result.map((e) => e.toEntity()).toList());
+      return Right(result);
     } catch (e) {
       return Left(e.toString());
     }
   }
 
   @override
-  Future<Either<String, List<ProductListItemEntity>>> getAllProducts() async {
+  Future<Either<String, ProductListItemResponse>> getAllProducts() async {
     try {
       final result = await _remoteDatasource.getAllProducts();
-      return Right(result.map((e) => e.toEntity()).toList());
+      return Right(result);
     } catch (e) {
       return Left(e.toString());
     }
   }
 
   @override
-  Future<Either<String, CartEntity>> getCartById(String cartId) async {
+  Future<Either<String, CartModel?>> getCartById(String cartId) async {
     try {
       final result = await _remoteDatasource.getCartById(cartId);
-      return Right(result.toEntity());
+      return Right(result);
     } catch (e) {
       return Left(e.toString());
     }
   }
 
   @override
-  Future<Either<String, ProductListItemEntity>> getProductById(
-      String productId) async {
+  Future<Either<String, ProductModel>> getProductById(String productId) async {
     try {
       final result = await _remoteDatasource.getProductById(productId);
-      return Right(result.toEntity());
+      return Right(result);
     } catch (e) {
       return Left(e.toString());
     }
   }
 
   @override
-  Future<Either<String, CartEntity>> updateCart(CartEntity cart) async {
+  Future<Either<String, CartModel>> updateCart(CartModel cart) async {
     try {
-      final result = await _remoteDatasource.updateCart(cart.toModel());
-      return Right(result.toEntity());
+      final result = await _remoteDatasource.updateCart(cart);
+      return Right(result);
     } catch (e) {
       return Left(e.toString());
     }
   }
 
   @override
-  Future<Either<String, void>> deleteCart(CartEntity cart) async {
+  Future<Either<String, void>> deleteCart(CartModel cart) async {
     try {
       await _localDatasource.deleteCart(cart.toTable());
     } catch (e) {
@@ -84,21 +87,21 @@ class StoreRepositoryImpl extends StoreRepository {
   }
 
   @override
-  Future<Either<String, List<CartEntity>>> getAllSavedCart() async {
+  Future<Either<String, List<CartModel>>> getAllSavedCart() async {
     try {
       final result = await _localDatasource.getAllSavedCart();
-      return Right(result.map((e) => e.toEntity()).toList());
+      return Right(result.map((e) => e.toModel()).toList());
     } catch (e) {
       return Left(e.toString());
     }
   }
 
   @override
-  Future<Either<String, CartEntity>> getSavedCartById(int cartId) async {
+  Future<Either<String, CartModel>> getSavedCartById(int cartId) async {
     try {
       final result = await _localDatasource.getSavedCartById(cartId);
       if (result != null) {
-        return Right(result.toEntity());
+        return Right(result.toModel());
       } else {
         return const Left('Cart not found');
       }
@@ -108,7 +111,7 @@ class StoreRepositoryImpl extends StoreRepository {
   }
 
   @override
-  Future<Either<String, void>> saveCart(CartEntity cart) async {
+  Future<Either<String, void>> saveCart(CartModel cart) async {
     try {
       await _localDatasource.saveCart(cart.toTable());
     } catch (e) {
@@ -118,7 +121,7 @@ class StoreRepositoryImpl extends StoreRepository {
   }
 
   @override
-  Future<Either<String, void>> updateSavedCart(CartEntity cart) async {
+  Future<Either<String, void>> updateSavedCart(CartModel cart) async {
     try {
       await _localDatasource.updateSavedCart(cart.toTable());
     } catch (e) {

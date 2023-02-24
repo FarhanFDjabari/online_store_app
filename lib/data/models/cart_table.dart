@@ -2,33 +2,67 @@ import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 import 'package:floor/floor.dart';
-import 'package:online_order_app/data/models/product.dart';
-import 'package:online_order_app/domain/entities/cart_entity.dart';
+import 'package:online_order_app/data/models/cart_model.dart';
+import 'package:online_order_app/data/models/cart_product.dart';
 
 @Entity(tableName: 'cart')
 class CartTable extends Equatable {
   @primaryKey
   final int id;
-  final int? userId;
-  final String? date;
   final String? products;
-  final int? v;
+  final int? total;
+  final int? discountedTotal;
+  final int? userId;
+  final int? totalProducts;
+  final int? totalQuantity;
 
-  const CartTable(
-      {required this.id, this.userId, this.date, this.products, this.v});
+  const CartTable({
+    required this.id,
+    this.products,
+    this.total,
+    this.discountedTotal,
+    this.userId,
+    this.totalProducts,
+    this.totalQuantity,
+  });
 
-  CartEntity toEntity() => CartEntity(
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'products': products,
+        'total': total,
+        'discountedTotal': discountedTotal,
+        'userId': userId,
+        'totalProducts': totalProducts,
+        'totalQuantity': totalQuantity,
+      };
+
+  CartModel toModel() => CartModel(
         id: id,
-        date: DateTime.tryParse(date ?? ""),
+        discountedTotal: discountedTotal,
         products: products
             ?.split(';')
-            .map((e) => Product.fromJson(jsonDecode(e) as Map<String, dynamic>))
+            .map((e) =>
+                CartProduct.fromJson(jsonDecode(e) as Map<String, dynamic>))
             .toList(),
+        total: total,
+        totalProducts: totalProducts,
+        totalQuantity: totalQuantity,
+        userId: userId,
       );
 
   @override
   bool get stringify => true;
 
   @override
-  List<Object?> get props => [id, userId, date, products, v];
+  List<Object?> get props {
+    return [
+      id,
+      products,
+      total,
+      discountedTotal,
+      userId,
+      totalProducts,
+      totalQuantity,
+    ];
+  }
 }

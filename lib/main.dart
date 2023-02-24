@@ -5,11 +5,11 @@ import 'package:online_order_app/app/app.dart';
 import 'package:online_order_app/helper/app_bloc_observer.dart';
 import 'package:online_order_app/injection.dart';
 
-void main() {
+void main() async {
   Bloc.observer = AppBlocObserver();
   WidgetsFlutterBinding.ensureInitialized();
 
-  configureDependencies();
+  await configureDependencies();
 
   if (kReleaseMode) {
     debugPrint = (String? message, {int? wrapWidth}) {};

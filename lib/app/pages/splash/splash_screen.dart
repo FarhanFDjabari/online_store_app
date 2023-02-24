@@ -28,10 +28,8 @@ class SplashScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                CircularProgressIndicator.adaptive(
-                  backgroundColor: Theme.of(context).colorScheme.onBackground,
-                ),
+              children: const [
+                CircularProgressIndicator.adaptive(),
               ],
             ),
           );

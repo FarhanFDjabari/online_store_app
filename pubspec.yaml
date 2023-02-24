@@ -24,6 +24,7 @@ dependencies:
   intl: ^0.18.0
   path_provider: ^2.0.0
   path: ^1.8.2
+  flutter_rating_bar: ^4.0.1
   retrofit: ^4.0.1
 
 dev_dependencies:

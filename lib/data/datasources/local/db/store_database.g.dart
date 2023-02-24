@@ -85,7 +85,7 @@ class _$StoreDatabase extends StoreDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `cart` (`id` INTEGER NOT NULL, `userId` INTEGER, `date` TEXT, `products` TEXT, `v` INTEGER, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `cart` (`id` INTEGER NOT NULL, `products` TEXT, `total` INTEGER, `discountedTotal` INTEGER, `userId` INTEGER, `totalProducts` INTEGER, `totalQuantity` INTEGER, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -109,10 +109,12 @@ class _$CartDao extends CartDao {
             'cart',
             (CartTable item) => <String, Object?>{
                   'id': item.id,
-                  'userId': item.userId,
-                  'date': item.date,
                   'products': item.products,
-                  'v': item.v
+                  'total': item.total,
+                  'discountedTotal': item.discountedTotal,
+                  'userId': item.userId,
+                  'totalProducts': item.totalProducts,
+                  'totalQuantity': item.totalQuantity
                 }),
         _cartTableUpdateAdapter = UpdateAdapter(
             database,
@@ -120,10 +122,12 @@ class _$CartDao extends CartDao {
             ['id'],
             (CartTable item) => <String, Object?>{
                   'id': item.id,
-                  'userId': item.userId,
-                  'date': item.date,
                   'products': item.products,
-                  'v': item.v
+                  'total': item.total,
+                  'discountedTotal': item.discountedTotal,
+                  'userId': item.userId,
+                  'totalProducts': item.totalProducts,
+                  'totalQuantity': item.totalQuantity
                 }),
         _cartTableDeletionAdapter = DeletionAdapter(
             database,
@@ -131,10 +135,12 @@ class _$CartDao extends CartDao {
             ['id'],
             (CartTable item) => <String, Object?>{
                   'id': item.id,
-                  'userId': item.userId,
-                  'date': item.date,
                   'products': item.products,
-                  'v': item.v
+                  'total': item.total,
+                  'discountedTotal': item.discountedTotal,
+                  'userId': item.userId,
+                  'totalProducts': item.totalProducts,
+                  'totalQuantity': item.totalQuantity
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -154,10 +160,12 @@ class _$CartDao extends CartDao {
     return _queryAdapter.queryList('SELECT * FROM cart',
         mapper: (Map<String, Object?> row) => CartTable(
             id: row['id'] as int,
-            userId: row['userId'] as int?,
-            date: row['date'] as String?,
             products: row['products'] as String?,
-            v: row['v'] as int?));
+            total: row['total'] as int?,
+            discountedTotal: row['discountedTotal'] as int?,
+            userId: row['userId'] as int?,
+            totalProducts: row['totalProducts'] as int?,
+            totalQuantity: row['totalQuantity'] as int?));
   }
 
   @override
@@ -165,10 +173,12 @@ class _$CartDao extends CartDao {
     return _queryAdapter.query('SELECT * FROM cart WHERE id = ?1',
         mapper: (Map<String, Object?> row) => CartTable(
             id: row['id'] as int,
-            userId: row['userId'] as int?,
-            date: row['date'] as String?,
             products: row['products'] as String?,
-            v: row['v'] as int?),
+            total: row['total'] as int?,
+            discountedTotal: row['discountedTotal'] as int?,
+            userId: row['userId'] as int?,
+            totalProducts: row['totalProducts'] as int?,
+            totalQuantity: row['totalQuantity'] as int?),
         arguments: [cartId]);
   }
 

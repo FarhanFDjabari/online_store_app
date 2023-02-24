@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:online_order_app/app/styles/colors.dart';
+import 'package:online_order_app/app/styles/font.dart';
 
 final lightTheme = ThemeData.light().copyWith(
+  textTheme: textTheme,
   colorScheme: const ColorScheme.light(
     primary: Color(0xFFF42A28),
     onPrimary: Color(0xFF2C0C3C),
@@ -14,6 +16,7 @@ final lightTheme = ThemeData.light().copyWith(
 );
 
 final darkTheme = ThemeData.dark().copyWith(
+  textTheme: textTheme,
   colorScheme: const ColorScheme.light(
     primary: Color(0xFFF4AC1C),
     onPrimary: Color(0xFFF0F2F6),

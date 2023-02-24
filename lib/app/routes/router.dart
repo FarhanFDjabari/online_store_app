@@ -27,7 +27,7 @@ final router = GoRouter(
           path: RoutePath.productDetail,
           name: RouteName.productDetail,
           builder: (context, state) => ProductDetailScreen(
-            productId: "${state.path}",
+            productId: "${state.params['productId']}",
           ),
         ),
       ],
@@ -41,7 +41,7 @@ final router = GoRouter(
           path: RoutePath.orderDetail,
           name: RouteName.orderDetail,
           builder: (context, state) => OrderDetailScreen(
-            orderId: "${state.path}",
+            orderId: "${state.params['orderId']}",
           ),
           routes: [
             GoRoute(
