@@ -90,7 +90,7 @@ class TransactionCard extends StatelessWidget {
                     color: lightGrey.withOpacity(0.5),
                   );
                 },
-                itemCount: 2,
+                itemCount: cart.products?.length ?? 0,
               ),
             ),
             Row(

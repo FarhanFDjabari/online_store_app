@@ -25,3 +25,13 @@ class OrderDetailSuccess extends OrderDetailState {
   final String message;
   const OrderDetailSuccess(this.message);
 }
+
+class OrderDeleteSuccess extends OrderDetailState {
+  final String message;
+  final CartModel cart;
+
+  const OrderDeleteSuccess(this.message, this.cart);
+
+  @override
+  List<Object> get props => [message, cart];
+}

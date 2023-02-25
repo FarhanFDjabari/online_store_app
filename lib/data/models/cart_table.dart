@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:floor/floor.dart';
 import 'package:online_order_app/data/models/cart_model.dart';
 import 'package:online_order_app/data/models/cart_product.dart';
+import 'package:online_order_app/data/models/cart_product_type_converter.dart';
 
 @Entity(tableName: 'cart')
 class CartTable extends Equatable {
@@ -27,28 +28,26 @@ class CartTable extends Equatable {
   });
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'products': products,
-        'total': total,
-        'discountedTotal': discountedTotal,
-        'userId': userId,
-        'totalProducts': totalProducts,
-        'totalQuantity': totalQuantity,
+        "id": id,
+        "products": products,
+        "total": total,
+        "discountedTotal": discountedTotal,
+        "userId": userId,
+        "totalProducts": totalProducts,
+        "totalQuantity": totalQuantity,
       };
 
-  CartModel toModel() => CartModel(
-        id: id,
-        discountedTotal: discountedTotal,
-        products: products
-            ?.split(';')
-            .map((e) =>
-                CartProduct.fromJson(jsonDecode(e) as Map<String, dynamic>))
-            .toList(),
-        total: total,
-        totalProducts: totalProducts,
-        totalQuantity: totalQuantity,
-        userId: userId,
-      );
+  CartModel toModel() {
+    return CartModel(
+      id: id,
+      discountedTotal: discountedTotal,
+      products: CartProductListTypeConverter().decode(products ?? ""),
+      total: total,
+      totalProducts: totalProducts,
+      totalQuantity: totalQuantity,
+      userId: userId,
+    );
+  }
 
   @override
   bool get stringify => true;

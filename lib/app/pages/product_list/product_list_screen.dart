@@ -5,12 +5,23 @@ import 'package:online_order_app/app/pages/product_list/widgets/add_to_cart_fab.
 import 'package:online_order_app/app/pages/product_list/widgets/product_list.dart';
 import 'package:online_order_app/app/routes/route_name.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:online_order_app/app/routes/route_path.dart';
+import 'package:online_order_app/app/widgets/store_dialog.dart';
+import 'package:online_order_app/data/models/product_model.dart';
 import 'package:online_order_app/injection.dart';
 
 import 'bloc/product_list_bloc.dart';
 
-class ProductListScreen extends StatelessWidget {
+class ProductListScreen extends StatefulWidget {
   const ProductListScreen({Key? key}) : super(key: key);
+
+  @override
+  State<ProductListScreen> createState() => _ProductListScreenState();
+}
+
+class _ProductListScreenState extends State<ProductListScreen> {
+  Map<String, int> selectedProducts = {};
+  List<ProductModel> tempProducts = [];
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +32,34 @@ class ProductListScreen extends StatelessWidget {
         builder: (context) {
           return BlocListener<ProductListBloc, ProductListState>(
             listener: (context, state) {
-              if (state is ProductListError) {}
+              if (state.status == ProductListStatus.changed) {
+                selectedProducts = state.tempSelectedProduct;
+              } else if (state.status == ProductListStatus.success) {
+                selectedProducts.clear();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: Theme.of(context)
+                        .colorScheme
+                        .onBackground
+                        .withOpacity(0.75),
+                    padding: const EdgeInsets.all(16),
+                  ),
+                );
+              } else if (state.status == ProductListStatus.uploadError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: Theme.of(context)
+                        .colorScheme
+                        .onBackground
+                        .withOpacity(0.75),
+                    padding: const EdgeInsets.all(16),
+                  ),
+                );
+              } else if (state.status == ProductListStatus.loaded) {
+                tempProducts = state.productList;
+              }
             },
             child: Scaffold(
               backgroundColor: Theme.of(context).colorScheme.background,
@@ -70,41 +108,63 @@ class ProductListScreen extends StatelessWidget {
                       Expanded(
                         child: BlocBuilder<ProductListBloc, ProductListState>(
                           builder: (context, state) {
-                            if (state is ProductListLoaded) {
+                            if (state.status == ProductListStatus.loaded) {
                               return ProductList(
-                                products: state.productList,
+                                products: tempProducts,
                                 onAddQty: (id) {
-                                  getIt<ProductListBloc>()
-                                      .add(AddProductQuantityEvent(id));
+                                  context.read<ProductListBloc>().add(
+                                      AddProductQuantityEvent(
+                                          id, selectedProducts));
                                 },
                                 onSubsQty: (id) {
-                                  getIt<ProductListBloc>()
-                                      .add(SubtractProductQuantityEvent(id));
+                                  context.read<ProductListBloc>().add(
+                                      SubtractProductQuantityEvent(
+                                          id, selectedProducts));
                                 },
-                                selectedProducts: state.tempSelectedProduct,
+                                selectedProducts: selectedProducts,
                               );
-                            } else if (state is ProductListChanged) {
-                              debugPrint(state.tempSelectedProduct.toString());
+                            } else if (state.status ==
+                                ProductListStatus.changed) {
                               return ProductList(
-                                products: state.productList,
+                                products: tempProducts,
                                 onAddQty: (id) {
-                                  getIt<ProductListBloc>()
-                                      .add(AddProductQuantityEvent(id));
+                                  context.read<ProductListBloc>().add(
+                                      AddProductQuantityEvent(
+                                          id, selectedProducts));
                                 },
                                 onSubsQty: (id) {
-                                  getIt<ProductListBloc>()
-                                      .add(SubtractProductQuantityEvent(id));
+                                  context.read<ProductListBloc>().add(
+                                      SubtractProductQuantityEvent(
+                                          id, selectedProducts));
                                 },
-                                selectedProducts: state.tempSelectedProduct,
+                                selectedProducts: selectedProducts,
                               );
-                            } else if (state is ProductListError) {
+                            } else if (state.status ==
+                                    ProductListStatus.uploadError ||
+                                state.status == ProductListStatus.success) {
+                              return ProductList(
+                                products: tempProducts,
+                                onAddQty: (id) {
+                                  context.read<ProductListBloc>().add(
+                                      AddProductQuantityEvent(
+                                          id, selectedProducts));
+                                },
+                                onSubsQty: (id) {
+                                  context.read<ProductListBloc>().add(
+                                      SubtractProductQuantityEvent(
+                                          id, selectedProducts));
+                                },
+                                selectedProducts: selectedProducts,
+                              );
+                            } else if (state.status ==
+                                ProductListStatus.error) {
                               return Center(
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 16.0,
                                   ),
                                   child: Text(
-                                    "${state.message}",
+                                    state.message,
                                     style: Theme.of(context)
                                         .textTheme
                                         .displaySmall
@@ -125,10 +185,41 @@ class ProductListScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 15.sp),
-                      AddToCartFab(
-                        onPressed: () {},
-                        isEnable: getIt<ProductListBloc>().isInputValid(),
-                      ),
+                      BlocBuilder<ProductListBloc, ProductListState>(
+                          builder: (context, state) {
+                        return AddToCartFab(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (_) {
+                                return StoreDialog(
+                                  title: 'Add To Cart Conrfirmation',
+                                  description:
+                                      'Are you sure to add product to your cart?',
+                                  onSuccessPressed: () {
+                                    context.pop();
+                                    context
+                                        .read<ProductListBloc>()
+                                        .add(AddCartEvent(selectedProducts));
+                                  },
+                                  onCancelPressed: () {
+                                    context.pop();
+                                  },
+                                  successButtonLabel: 'Yes',
+                                  cancelButtonLabel: 'Cancel',
+                                );
+                              },
+                            );
+                          },
+                          isLoading:
+                              state.status == ProductListStatus.addCartLoading,
+                          isEnable: state.status !=
+                                  ProductListStatus.addCartLoading &&
+                              context
+                                  .read<ProductListBloc>()
+                                  .isInputValid(selectedProducts),
+                        );
+                      }),
                     ],
                   ),
                 ),

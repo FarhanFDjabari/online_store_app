@@ -1,10 +1,11 @@
 import 'package:equatable/equatable.dart';
+import 'package:online_order_app/data/models/cart_product_type_converter.dart';
 import 'package:online_order_app/data/models/cart_table.dart';
 
 import 'cart_product.dart';
 
 class CartModel extends Equatable {
-  final int id;
+  final int? id;
   final List<CartProduct>? products;
   final int? total;
   final int? discountedTotal;
@@ -13,7 +14,7 @@ class CartModel extends Equatable {
   final int? totalQuantity;
 
   const CartModel({
-    required this.id,
+    this.id,
     this.products,
     this.total,
     this.discountedTotal,
@@ -44,10 +45,15 @@ class CartModel extends Equatable {
         'totalQuantity': totalQuantity,
       };
 
+  Map<String, dynamic> toAddCartRequest() => {
+        'userId': userId,
+        'products': products?.map((e) => e.toJson()).toList(),
+      };
+
   CartTable toTable() => CartTable(
-        id: id,
+        id: id ?? 0,
         discountedTotal: discountedTotal,
-        products: products?.map((e) => e.toJson()).toList().join(';'),
+        products: CartProductListTypeConverter().encode(products ?? []),
         total: total,
         totalProducts: totalProducts,
         totalQuantity: totalQuantity,

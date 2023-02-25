@@ -82,7 +82,7 @@ class OrderCard extends StatelessWidget {
                     color: lightGrey.withOpacity(0.5),
                   );
                 },
-                itemCount: 2,
+                itemCount: products.length,
               ),
             ),
           ],

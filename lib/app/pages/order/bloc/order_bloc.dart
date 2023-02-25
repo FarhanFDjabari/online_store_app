@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:online_order_app/data/models/cart_model.dart';
 import 'package:online_order_app/domain/repositories/store_repository.dart';
@@ -14,17 +15,14 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
   OrderBloc(this._repository) : super(OrderInitial()) {
     on<LoadAllOrderEvent>((event, emit) async {
       emit(OrderLoading());
-      final result = await _repository.getAllCarts();
       final localResult = await _repository.getAllSavedCart();
-      result.fold(
-        (l) => emit(OrderError(l)),
-        (remoteList) {
-          localResult.fold(
-            (l) => emit(OrderError(l)),
-            (localList) {
-              emit(OrderLoaded([...?remoteList.carts, ...localList]));
-            },
-          );
+      localResult.fold(
+        (l) {
+          debugPrint(l);
+          emit(OrderError(l));
+        },
+        (localList) {
+          emit(OrderLoaded([...localList]));
         },
       );
     });
@@ -34,7 +32,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       result.fold(
         (l) => emit(OrderError(l)),
         (r) => emit(
-          const OrderSuccess("Berhasil menghapus keranjang"),
+          OrderDeleteSuccess("Berhasil menghapus keranjang", event.cart),
         ),
       );
     });

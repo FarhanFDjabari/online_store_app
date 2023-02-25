@@ -19,6 +19,16 @@ class OrderSuccess extends OrderState {
   List<Object> get props => [message];
 }
 
+class OrderDeleteSuccess extends OrderState {
+  final String message;
+  final CartModel cart;
+
+  const OrderDeleteSuccess(this.message, this.cart);
+
+  @override
+  List<Object> get props => [message];
+}
+
 class OrderLoaded extends OrderState {
   final List<CartModel> carts;
   const OrderLoaded(this.carts);

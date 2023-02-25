@@ -17,6 +17,14 @@ class UpdateCartEvent extends OrderDetailEvent {
   const UpdateCartEvent(this.cart);
 }
 
+class DeleteCartEvent extends OrderDetailEvent {
+  final CartModel cart;
+  const DeleteCartEvent(this.cart);
+
+  @override
+  List<Object> get props => [cart];
+}
+
 class OrderCartEvent extends OrderDetailEvent {
   final CartModel cart;
   const OrderCartEvent(this.cart);

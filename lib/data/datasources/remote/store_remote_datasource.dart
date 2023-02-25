@@ -28,7 +28,7 @@ class StoreRemoteDatasource {
   }
 
   Future<CartModel> addCart(CartModel cart) async {
-    return _api.postNewCart(cart: cart);
+    return _api.postNewCart(cart: cart.toAddCartRequest());
   }
 
   Future<CartModel> updateCart(CartModel cart) async {

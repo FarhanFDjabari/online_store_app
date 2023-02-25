@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:online_order_app/data/models/cart_model.dart';
 import 'package:online_order_app/data/models/cart_product.dart';
+import 'package:online_order_app/data/models/cart_product_type_converter.dart';
 import 'package:online_order_app/data/models/product_model.dart';
 import 'package:online_order_app/domain/repositories/store_repository.dart';
 
@@ -14,64 +17,72 @@ part 'product_list_state.dart';
 class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
   final StoreRepository _repository;
 
-  ProductListBloc(this._repository) : super(ProductListInitial()) {
+  ProductListBloc(this._repository) : super(ProductListState.initial()) {
     on<LoadProductListEvent>((event, emit) async {
-      emit(ProductListLoading());
+      emit(ProductListState.loading());
       final result = await _repository.getAllProducts();
       result.fold(
-        (l) => emit(ProductListError(l)),
+        (l) => emit(ProductListState.error(l)),
         (r) {
-          emit(ProductListLoaded(r.products ?? []));
+          emit(ProductListState.loaded(r.products ?? []));
         },
       );
     });
     on<AddProductQuantityEvent>((event, emit) async {
       Map<String, int> changedListMap = {};
-      if (isProductSelected(event.productId)) {
-        changedListMap.addAll(state.tempSelectedProduct);
-        changedListMap[event.productId] =
-            (state.tempSelectedProduct[event.productId] ?? 0) + 1;
-      } else {
-        changedListMap = {event.productId: 1};
-        debugPrint(state.tempSelectedProduct.toString());
-      }
-      emit(ProductListChanged(changedListMap));
+      changedListMap.addEntries(event.selectedProduct.entries);
+      var prevQty = event.selectedProduct[event.productId] ?? 0;
+
+      changedListMap.update(event.productId, (value) => ++prevQty,
+          ifAbsent: () => 1);
+
+      emit(ProductListState.changed(false, changedListMap, state.productList));
     });
     on<SubtractProductQuantityEvent>((event, emit) async {
-      if (isProductSelected(event.productId)) {
-        if (state.tempSelectedProduct[event.productId]! > 0) {
+      if (isProductSelected(event.productId, event.selectedProduct)) {
+        if (event.selectedProduct[event.productId]! > 0) {
           Map<String, int> changedListMap = {};
-          changedListMap.addAll(state.tempSelectedProduct);
+          changedListMap.addEntries(event.selectedProduct.entries);
 
-          changedListMap[event.productId] =
-              (state.tempSelectedProduct[event.productId] ?? 0) - 1;
-          debugPrint(state.tempSelectedProduct.toString());
-          emit(ProductListChanged(changedListMap));
+          var prevQty = event.selectedProduct[event.productId] ?? 0;
+
+          changedListMap.update(event.productId, (value) => --prevQty);
+
+          emit(ProductListState.changed(
+              true, changedListMap, state.productList));
         }
       }
     });
     on<AddCartEvent>((event, emit) async {
-      emit(ProductListAddCartLoading());
+      emit(ProductListState.addCartLoading());
 
-      // final addCartResult = await _repository.addCart(cart);
-      // addCartResult.fold(
-      //   (l) => emit(ProductListError(l)),
-      //   (r) async {
-      //     final saveCartResult = await _repository.saveCart(r);
-      //     saveCartResult.fold(
-      //       (l) => emit(ProductListError(l)),
-      //       (r) => emit(
-      //         const ProductListSuccess("Berhasil menambahkan ke keranjang"),
-      //       ),
-      //     );
-      //   },
-      // );
+      final cartProducts = _generateProductCartList(event.selectedProduct);
+
+      var cart = CartModel(
+        id: 0,
+        products: cartProducts,
+        userId: 100,
+      );
+
+      final addCartResult = await _repository.addCart(cart);
+
+      addCartResult.fold(
+        (l) => emit(ProductListState.uploadError(l, state.productList)),
+        (r) {
+          cart = r;
+        },
+      );
+      final saveCartResult = await _repository.saveCart(cart);
+      saveCartResult.fold(
+        (l) => emit(ProductListState.uploadError(l, state.productList)),
+        (r) => emit(ProductListState.success("Successfully add cart")),
+      );
     });
   }
 
-  List<CartProduct> _generateProductCartList() {
-    if (state.tempSelectedProduct.isNotEmpty) {
-      final result = state.tempSelectedProduct.entries
+  List<CartProduct> _generateProductCartList(Map<String, int> selectedProduct) {
+    if (selectedProduct.isNotEmpty) {
+      final result = selectedProduct.entries
           .map(
             (e) => CartProduct(
               id: int.parse(e.key),
@@ -85,11 +96,11 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
     return [];
   }
 
-  bool isProductSelected(String productId) {
-    return state.tempSelectedProduct.containsKey(productId);
+  bool isProductSelected(String productId, Map<String, int> selectedProduct) {
+    return selectedProduct.containsKey(productId);
   }
 
-  bool isInputValid() {
-    return state.tempSelectedProduct.values.any((element) => element > 0);
+  bool isInputValid(Map<String, int> selectedProduct) {
+    return selectedProduct.values.any((element) => element > 0);
   }
 }

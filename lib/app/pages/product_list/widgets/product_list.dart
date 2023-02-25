@@ -31,7 +31,7 @@ class ProductList extends StatelessWidget {
             imageUrl: "${products[index].images?.first}",
             title: "${products[index].title}",
             price: "\$${products[index].price}",
-            qty: '${selectedProducts[products[index].id] ?? 0}',
+            qty: '${selectedProducts[products[index].id.toString()] ?? 0}',
             onTap: () =>
                 context.go('${RoutePath.productList}/${products[index].id}'),
             onAddQty: () {

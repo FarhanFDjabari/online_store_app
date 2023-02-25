@@ -8,6 +8,7 @@ import 'package:online_order_app/app/pages/splash/splash_screen.dart';
 import 'package:online_order_app/app/pages/transaction_result/transaction_result_screen.dart';
 import 'package:online_order_app/app/routes/route_name.dart';
 import 'package:online_order_app/app/routes/route_path.dart';
+import 'package:online_order_app/data/models/cart_model.dart';
 
 final router = GoRouter(
   initialLocation: RoutePath.splashScreen,
@@ -21,7 +22,7 @@ final router = GoRouter(
     GoRoute(
       path: RoutePath.productList,
       name: RouteName.productList,
-      builder: (context, state) => const ProductListScreen(),
+      builder: (context, state) => ProductListScreen(),
       routes: [
         GoRoute(
           path: RoutePath.productDetail,
@@ -35,7 +36,7 @@ final router = GoRouter(
     GoRoute(
       path: RoutePath.order,
       name: RouteName.order,
-      builder: (context, state) => const OrderScreen(),
+      builder: (context, state) => OrderScreen(),
       routes: [
         GoRoute(
           path: RoutePath.orderDetail,
@@ -48,6 +49,7 @@ final router = GoRouter(
               path: RoutePath.transactionResult,
               name: RouteName.transactionResult,
               builder: (context, state) => TransactionResultScreen(
+                cart: state.extra as CartModel,
                 orderId: "${state.params['orderId']}",
               ),
             ),

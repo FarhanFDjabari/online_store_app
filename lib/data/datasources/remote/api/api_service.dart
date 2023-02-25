@@ -24,9 +24,9 @@ abstract class ApiServices {
   @GET('carts')
   Future<CartListResponse> fetchAllCarts();
 
-  @POST('carts')
+  @POST('carts/add')
   Future<CartModel> postNewCart({
-    @Body() required CartModel cart,
+    @Body() required Map<String, dynamic> cart,
   });
 
   @PUT('carts/{id}')

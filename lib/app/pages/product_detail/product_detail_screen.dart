@@ -60,7 +60,10 @@ class ProductDetailScreen extends StatelessWidget {
                   if (state is ProductDetailLoaded) {
                     return Image.network(
                       "${state.product.images?.first}",
-                      fit: BoxFit.cover,
+                      fit: BoxFit.contain,
+                      height: ScreenUtil.defaultSize.height * 0.35,
+                      width: MediaQuery.of(context).size.width,
+                      alignment: Alignment.center,
                     );
                   } else {
                     return Container();

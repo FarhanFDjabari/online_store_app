@@ -30,13 +30,13 @@ class CartProduct extends Equatable {
       );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'price': price,
-        'quantity': quantity,
-        'total': total,
-        'discountPercentage': discountPercentage,
-        'discountedPrice': discountedPrice,
+        "id": id,
+        "title": title,
+        "price": price,
+        "quantity": quantity,
+        "total": total,
+        "discountPercentage": discountPercentage,
+        "discountedPrice": discountedPrice,
       };
 
   @override

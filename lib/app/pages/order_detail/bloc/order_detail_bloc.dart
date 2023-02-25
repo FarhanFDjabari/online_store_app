@@ -16,39 +16,23 @@ class OrderDetailBloc extends Bloc<OrderDetailEvent, OrderDetailState> {
   ) : super(OrderDetailInitial()) {
     on<LoadOrderDetailEvent>((event, emit) async {
       emit(OrderDetailLoading());
-      final result = await _repository.getCartById(event.orderId.toString());
       final savedOrder = await _repository.getSavedCartById(event.orderId);
 
-      result.fold(
+      savedOrder.fold(
         (l) => emit(OrderDetailError(l)),
-        (remoteData) {
-          if (remoteData != null) {
-            emit(OrderDetailLoaded(remoteData));
-          } else {
-            savedOrder.fold(
-              (l) => emit(OrderDetailError(l)),
-              (localData) => emit(
-                OrderDetailLoaded(localData),
-              ),
-            );
-          }
-        },
+        (localData) => emit(
+          OrderDetailLoaded(localData),
+        ),
       );
     });
-    on<UpdateCartEvent>((event, emit) async {
+    on<DeleteCartEvent>((event, emit) async {
       emit(OrderDetailLoading());
-      final result = await _repository.updateCart(event.cart);
-      final savedOrder = await _repository.updateSavedCart(event.cart);
+      final result = await _repository.deleteCart(event.cart);
 
       result.fold(
         (l) => emit(OrderDetailError(l)),
         (remoteData) {
-          savedOrder.fold(
-            (l) => emit(OrderDetailError(l)),
-            (r) => emit(
-              const OrderDetailSuccess("Berhasil melakukan perubahan"),
-            ),
-          );
+          emit(OrderDeleteSuccess("Berhasil melakukan perubahan", event.cart));
         },
       );
     });

@@ -93,7 +93,7 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(cart.toJson());
+    _data.addAll(cart);
     final _result = await _dio
         .fetch<Map<String, dynamic>>(_setStreamType<CartModel>(Options(
       method: 'POST',
@@ -102,7 +102,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'carts',
+              'carts/add',
               queryParameters: queryParameters,
               data: _data,
             )

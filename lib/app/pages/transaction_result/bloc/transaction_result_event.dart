@@ -9,7 +9,8 @@ abstract class TransactionResultEvent extends Equatable {
 
 class LoadTransactionResultEvent extends TransactionResultEvent {
   final int orderId;
-  const LoadTransactionResultEvent(this.orderId);
+  final CartModel cart;
+  const LoadTransactionResultEvent(this.orderId, this.cart);
 }
 
 class DeleteCartEvent extends TransactionResultEvent {

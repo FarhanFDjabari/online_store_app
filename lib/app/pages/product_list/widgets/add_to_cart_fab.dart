@@ -5,9 +5,11 @@ import 'package:online_order_app/app/styles/colors.dart';
 class AddToCartFab extends StatelessWidget {
   final VoidCallback? onPressed;
   final bool isEnable;
+  final bool isLoading;
 
   const AddToCartFab({
     super.key,
+    this.isLoading = false,
     this.onPressed,
     this.isEnable = true,
   });
@@ -15,7 +17,7 @@ class AddToCartFab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: isEnable ? onPressed : null,
+      onPressed: !isLoading && isEnable ? onPressed : null,
       style: ButtonStyle(
         elevation: MaterialStateProperty.all<double>(0),
         backgroundColor: MaterialStateProperty.all<Color>(
@@ -34,13 +36,23 @@ class AddToCartFab extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.add_shopping_cart_rounded,
-              color: Theme.of(context).colorScheme.background,
-            ),
-            SizedBox(width: 10.sp),
+            if (isLoading)
+              SizedBox(
+                width: 15,
+                height: 15,
+                child: CircularProgressIndicator.adaptive(
+                  backgroundColor: Theme.of(context).colorScheme.background,
+                  strokeWidth: 2,
+                ),
+              ),
+            if (!isLoading)
+              Icon(
+                Icons.add_shopping_cart_rounded,
+                color: Theme.of(context).colorScheme.background,
+              ),
+            SizedBox(width: 15.sp),
             Text(
-              'Add To Cart',
+              isLoading ? 'Adding to cart...' : 'Add To Cart',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.background,
                   ),

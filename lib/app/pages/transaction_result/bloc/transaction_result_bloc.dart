@@ -15,30 +15,8 @@ class TransactionResultBloc
   TransactionResultBloc(this._repository) : super(TransactionResultInitial()) {
     on<LoadTransactionResultEvent>((event, emit) async {
       emit(TransactionResultLoading());
-      final result = await _repository.getCartById(event.orderId.toString());
-      result.fold(
-        (l) => emit(TransactionResultError(l)),
-        (remoteData) async {
-          if (remoteData != null) {
-            emit(TransactionResultLoaded(remoteData));
-          } else {
-            final savedResult =
-                await _repository.getSavedCartById(event.orderId);
-            savedResult.fold(
-              (l) => emit(TransactionResultError(l)),
-              (localData) => emit(TransactionResultLoaded(localData)),
-            );
-          }
-        },
-      );
-    });
-    on<DeleteCartEvent>((event, emit) async {
-      emit(TransactionResultLoading());
-      final result = await _repository.deleteCart(event.cart);
-      result.fold(
-        (l) => emit(TransactionResultError(l)),
-        (r) => emit(TransactionResultSuccess()),
-      );
+      await Future.delayed(const Duration(seconds: 2));
+      emit(TransactionResultLoaded(event.cart));
     });
   }
 }
