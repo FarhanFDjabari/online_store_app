@@ -1,6 +1,7 @@
 import 'package:injectable/injectable.dart';
 import 'package:online_order_app/data/datasources/local/dao/cart_dao.dart';
 import 'package:online_order_app/data/datasources/local/db/store_database.dart';
+import 'package:online_order_app/data/datasources/local/store_local_datasource.dart';
 import 'package:online_order_app/data/datasources/remote/api/api_service.dart';
 import 'package:online_order_app/data/datasources/remote/env/environment.dart';
 import 'package:online_order_app/data/datasources/remote/interceptor/dio.dart';

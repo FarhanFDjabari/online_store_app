@@ -53,11 +53,11 @@ extension GetItInjectableX on _i1.GetIt {
       preResolve: true,
     );
     gh.lazySingleton<_i6.StoreRemoteDatasource>(
-        () => _i6.StoreRemoteDatasource(gh<_i3.ApiServices>()));
+        () => _i6.StoreRemoteDatasourceImpl(gh<_i3.ApiServices>()));
     gh.lazySingleton<_i7.CartDao>(
         () => appModule.getDao(gh<_i5.StoreDatabase>()));
     gh.lazySingleton<_i8.StoreLocalDatasource>(
-        () => _i8.StoreLocalDatasource(gh<_i7.CartDao>()));
+        () => _i8.StoreLocalDatasourceImpl(gh<_i7.CartDao>()));
     gh.lazySingleton<_i9.StoreRepository>(() => _i10.StoreRepositoryImpl(
           gh<_i6.StoreRemoteDatasource>(),
           gh<_i8.StoreLocalDatasource>(),
