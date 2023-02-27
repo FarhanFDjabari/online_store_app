@@ -4,7 +4,7 @@ This app is developed with the to help its users to order products online.
 
 ## Getting Started
 
-> **Flutter 3.37 is required to install the project**
+> **Flutter 3.76 is required to install the project**
 
 Before run the project, at first you must run `flutter pub get` in terminal to install some dependencies
 
